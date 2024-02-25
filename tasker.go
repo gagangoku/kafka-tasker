@@ -39,20 +39,20 @@ import (
 // See tasker_test.go for usage
 
 func NewKafkaMultiTasker(ctx context.Context, config MultiTaskerConfig) (KafkaMultiTasker, error) {
-	if config.nTasksPerPart < 0 {
+	if config.NumTasksPerPart < 0 {
 		return KafkaMultiTasker{}, fmt.Errorf("nTasksPerPart must be >= 0")
 	}
 
 	obj := KafkaMultiTasker{
-		reader:        config.reader,
-		committer:     &SimpleCommitter{Reader: config.reader},
-		partFn:        config.partFn,
-		processFn:     config.processFn,
-		errorHandler:  config.errorFn,
+		reader:        config.Reader,
+		committer:     &SimpleCommitter{Reader: config.Reader},
+		partFn:        config.PartFn,
+		processFn:     config.ProcessFn,
+		errorHandler:  config.ErrorHandler,
 		messages:      nil,
 		channelMap:    map[string]chan kafka.Message{},
 		committedMsgs: map[int64]struct{}{},
-		nTasksPerPart: config.nTasksPerPart,
+		nTasksPerPart: config.NumTasksPerPart,
 		messagesMutex: &sync.RWMutex{},
 		commitMutex:   &sync.Mutex{},
 	}

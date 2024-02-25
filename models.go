@@ -8,11 +8,11 @@ import (
 )
 
 type MultiTaskerConfig struct {
-	reader        *kafka.Reader
-	partFn        TaskIdPartIdTaskDetailsFn
-	processFn     ProcessFn
-	errorFn       ErrorFn
-	nTasksPerPart int
+	Reader          *kafka.Reader
+	PartFn          TaskIdPartIdTaskDetailsFn
+	ProcessFn       ProcessFn
+	ErrorHandler    ErrorFn
+	NumTasksPerPart int
 }
 
 type TaskIdPartIdTaskDetailsFn func(ctx context.Context, kMsg kafka.Message) (string, string, any)

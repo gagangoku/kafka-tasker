@@ -33,11 +33,11 @@ func Test_TaskerNoFailures(t *testing.T) {
 	ex := TestExecutor{}
 	ex.Init()
 	config := MultiTaskerConfig{
-		reader:        reader,
-		partFn:        partFn,
-		processFn:     ex.processFn,
-		errorFn:       ex.errorFn,
-		nTasksPerPart: 10,
+		Reader:          reader,
+		PartFn:          partFn,
+		ProcessFn:       ex.processFn,
+		ErrorHandler:    ex.errorFn,
+		NumTasksPerPart: 10,
 	}
 	tasker, _ := NewKafkaMultiTasker(ctx, config)
 	go tasker.Start(ctx)
@@ -84,11 +84,11 @@ func Test_TaskerWithFailures(t *testing.T) {
 	ex := TestExecutor{tasksToFailAlways: []string{"g3-1"}, tasksToFailOnce: []string{"g4-1"}}
 	ex.Init()
 	config := MultiTaskerConfig{
-		reader:        reader,
-		partFn:        partFn,
-		processFn:     ex.processWithRetryFn,
-		errorFn:       ex.errorFn,
-		nTasksPerPart: 10,
+		Reader:          reader,
+		PartFn:          partFn,
+		ProcessFn:       ex.processWithRetryFn,
+		ErrorHandler:    ex.errorFn,
+		NumTasksPerPart: 10,
 	}
 	tasker, _ := NewKafkaMultiTasker(ctx, config)
 	go tasker.Start(ctx)
