@@ -12,11 +12,10 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	zlog "github.com/rs/zerolog/log"
 	kafka "github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 	"github.com/testcontainers/testcontainers-go"
-
-	zlog "github.com/rs/zerolog/log"
 )
 
 func InitKafkaWriter(ctx context.Context, kafkaBrokers, kafkaTopic string) *kafka.Writer {
