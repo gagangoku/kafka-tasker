@@ -16,10 +16,11 @@ import (
 // using a user defined partition function to enable multiple tasks with different partId's to be run concurrently.
 //
 // Configuration:
-// - nTasksPerPart: the number of tasks to queue per partId. If more tasks are received, the publisher get blocked
+// - reader: reader to read from kafka
 // - partFn: function to compute the partId for a task
 // - processFn: function to actually process the task
-// - errorFn: error function to handle failed tasks (after retries)
+// - errorHandler: error function to handle failed tasks (after retries)
+// - numTasksPerPart: the number of tasks to queue per partId. If more tasks are received, the publisher get blocked
 //
 // ProcessFnWithPersistence is an implementation of processFn which tracks task attempts (preferably in a DB).
 //
