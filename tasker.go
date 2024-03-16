@@ -142,26 +142,32 @@ func (c *KafkaMultiTasker) commitIfPossible(ctx context.Context, offset int64) {
 
 	c.messagesMutex.RLock()
 	c.committedMsgs[offset] = struct{}{}
-	lastIdx := -1
+	lastSuccessfulIdx := -1
 	for idx, o := range c.messages {
-		lastIdx = idx
 		if _, exists := c.committedMsgs[o.Offset]; !exists {
 			break
+		} else {
+			lastSuccessfulIdx = idx
 		}
 	}
 	c.messagesMutex.RUnlock()
 
-	if lastIdx >= 0 {
-		logger.Debug().Msgf("[DEBUG] committing upto: %d %d", offset, lastIdx)
-		err := c.committer.CommitMessages(ctx, c.messages[0:lastIdx]...)
+	if lastSuccessfulIdx >= 0 {
+		c.messagesMutex.RLock()
+		lastSuccessfulMsg := c.messages[lastSuccessfulIdx]
+		msgsToCommit := c.messages[0 : lastSuccessfulIdx+1]
+		c.messagesMutex.RUnlock()
+
+		logger.Info().Msgf("[COMM] committing upto: %d %d %d", offset, lastSuccessfulIdx, lastSuccessfulMsg.Offset)
+		err := c.committer.CommitMessages(ctx, msgsToCommit...)
 		if err != nil {
-			logger.Error().Msgf("commit error: %d %d %s", offset, lastIdx, err)
+			logger.Error().Msgf("[COMM] commit error: %d %d %s", offset, lastSuccessfulIdx, err)
 			return
 		}
-		logger.Info().Msgf("commit done: %d %d", offset, lastIdx)
+		logger.Info().Msgf("[COMM] commit done: %d %d %d", offset, lastSuccessfulIdx, lastSuccessfulMsg.Offset)
 
 		c.messagesMutex.Lock()
-		c.messages = c.messages[lastIdx:]
+		c.messages = c.messages[lastSuccessfulIdx+1:]
 		c.messagesMutex.Unlock()
 	}
 }
