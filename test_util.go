@@ -3,7 +3,6 @@ package tasker
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -84,16 +83,16 @@ func InitKafkaForTesting() (CleanupFunc, string, error) {
 		},
 		Started: true,
 	})
-
 	if err != nil {
 		return nil, "", err
 	}
 
+	time.Sleep(1 * time.Second)
 	p2, _ := kafkaContainer.MappedPort(ctx, "9093")
 	fmt.Println("kafka external port: ", p2)
 	port := strings.Split(string(p2), "/")[0]
 
-	kafkaStartFile, err := ioutil.TempFile("", "testcontainers_start.sh")
+	kafkaStartFile, err := os.CreateTemp("", "testcontainers_start.sh")
 	if err != nil {
 		return nil, "", err
 	}
