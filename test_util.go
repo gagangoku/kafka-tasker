@@ -87,7 +87,8 @@ func InitKafkaForTesting() (CleanupFunc, string, error) {
 		return nil, "", err
 	}
 
-	time.Sleep(1 * time.Second)
+	// Sleep for some time for container to be able to find the right port
+	time.Sleep(2 * time.Second)
 	p2, _ := kafkaContainer.MappedPort(ctx, "9093")
 	fmt.Println("kafka external port: ", p2)
 	port := strings.Split(string(p2), "/")[0]
